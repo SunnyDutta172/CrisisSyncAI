@@ -126,9 +126,19 @@ export default function AuthPage() {
             <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.5 35.5 26.9 36 24 36c-5.2 0-9.7-2.9-11.3-7.1l-6.6 4.9C9.7 39.7 16.3 44 24 44z"/>
             <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.6 5.8l6.2 5.2C41.2 35.5 44 30 44 24c0-1.3-.1-2.7-.4-4z"/>
           </svg>
-          Google
+          Sign in withGoogle
         </button>
-
+          <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "1.1rem 0", fontSize: 13, color: theme.muted }}>
+            <div style={{ flex: 1, height: 0.5, background: theme.border }} />
+            <span>Don't have an account?</span>
+            <div style={{ flex: 1, height: 0.5, background: theme.border }} />
+          </div>
+          <button style={{
+            width: "100%", padding: 11, fontSize: 14, fontWeight: 500,
+            background: "transparent", color: theme.text,
+            border: `0.5px solid ${theme.text}`, borderRadius: 8, cursor: "pointer" }}>
+            Sign up
+          </button>
         {/* Footer */}
         <p style={{ fontSize: 12, textAlign: "center", color: theme.muted, marginTop: "1.25rem", lineHeight: 1.6 }}>
           By clicking continue, you agree to our{" "}
