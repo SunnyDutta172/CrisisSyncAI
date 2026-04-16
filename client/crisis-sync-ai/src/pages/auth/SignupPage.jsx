@@ -37,7 +37,7 @@ export default function SignupPage({ onNavigateLogin }) {
       <DarkToggle />
 
       <p style={{ fontSize: 20, fontWeight: 500, color: theme.text, marginBottom: "2rem" }}>
-        App Name
+        CRISIS SYNC AI
       </p>
 
       <div
