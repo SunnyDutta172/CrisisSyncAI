@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
-import { ROLES } from "../../constants/roles";
 import DarkToggle from "../../components/auth/DarkToggle";
-import RoleSelector from "../../components/auth/RoleSelector";
 import GoogleButton from "../../components/auth/GoogleButton";
 
-export default function LoginPage({ onNavigateSignup }) {
+export default function LoginPage({ onNavigateSignup, onNavigateGuest }) {
   const { theme } = useTheme();
   const { login } = useAuth();
 
-  const [role, setRole] = useState("admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -21,12 +18,12 @@ export default function LoginPage({ onNavigateSignup }) {
       setTimeout(() => setError(false), 1500);
       return;
     }
-    login(email, role);
-    alert(`Signed in as ${ROLES[role].label} — ${email}`);
+    login(email, "staff");
+    alert(`Signed in — ${email}`);
   };
 
-  const handleGoogle = () => {
-    alert("Google sign-in coming soon!");
+  const handleGuestLogin = () => {
+    onNavigateGuest();
   };
 
   return (
@@ -68,8 +65,6 @@ export default function LoginPage({ onNavigateSignup }) {
           Enter your credentials to continue
         </p>
 
-        <RoleSelector role={role} setRole={setRole} />
-
         {["email", "password"].map((field) => (
           <input
             key={field}
@@ -110,7 +105,27 @@ export default function LoginPage({ onNavigateSignup }) {
             marginTop: 4,
           }}
         >
-          Sign in as {ROLES[role].label}
+          Sign in
+        </button>
+
+        {/* Continue as Guest */}
+        <button
+          onClick={handleGuestLogin}
+          style={{
+            width: "100%",
+            padding: 10,
+            fontSize: 13,
+            fontWeight: 400,
+            background: "transparent",
+            color: theme.muted,
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            marginTop: 6,
+            textDecoration: "underline",
+          }}
+        >
+          Continue as Guest
         </button>
 
         {/* Divider */}
@@ -119,7 +134,7 @@ export default function LoginPage({ onNavigateSignup }) {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            margin: "1.1rem 0",
+            margin: "1rem 0",
             fontSize: 13,
             color: theme.muted,
           }}
@@ -129,7 +144,7 @@ export default function LoginPage({ onNavigateSignup }) {
           <div style={{ flex: 1, height: 0.5, background: theme.border }} />
         </div>
 
-        <GoogleButton onClick={handleGoogle} />
+        <GoogleButton onClick={() => alert("Google sign-in coming soon!")} />
 
         {/* Sign Up prompt */}
         <div

@@ -5,6 +5,7 @@ import GoogleButton from "../../components/auth/GoogleButton";
 
 export default function SignupPage({ onNavigateLogin }) {
   const { theme } = useTheme();
+  const [role, setRole] = useState("admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -16,7 +17,7 @@ export default function SignupPage({ onNavigateLogin }) {
       setTimeout(() => setError(false), 1500);
       return;
     }
-    alert(`Account created for ${email}`);
+    alert(`Account created for ${email} as ${role}`);
   };
 
   return (
@@ -57,6 +58,32 @@ export default function SignupPage({ onNavigateLogin }) {
         <p style={{ fontSize: 14, textAlign: "center", color: theme.muted, margin: "6px 0 20px" }}>
           Sign up to get started
         </p>
+
+        {/* Role Dropdown — Admin & Staff only */}
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px 12px",
+            fontSize: 14,
+            borderRadius: 8,
+            marginBottom: 10,
+            background: theme.inputBg,
+            color: theme.text,
+            outline: "none",
+            border: `0.5px solid ${theme.inputBorder}`,
+            cursor: "pointer",
+            appearance: "none",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right 12px center",
+            boxSizing: "border-box",
+          }}
+        >
+          <option value="admin">Admin</option>
+          <option value="staff">Staff</option>
+        </select>
 
         {[
           { field: "email", placeholder: "email@domain.com", value: email, set: setEmail },
