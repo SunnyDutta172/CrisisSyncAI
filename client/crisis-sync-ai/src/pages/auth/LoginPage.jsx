@@ -3,6 +3,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import DarkToggle from "../../components/auth/DarkToggle";
 import GoogleButton from "../../components/auth/GoogleButton";
+import api from "../../api/api";
 
 export default function LoginPage({ onNavigateSignup, onNavigateGuest }) {
   const { theme } = useTheme();
@@ -12,14 +13,19 @@ export default function LoginPage({ onNavigateSignup, onNavigateGuest }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email || !password) {
       setError(true);
       setTimeout(() => setError(false), 1500);
       return;
     }
-    login(email, "staff");
-    alert(`Signed in — ${email}`);
+    try {
+      const { data } = await api.post("/auth/login", { email, password });
+      login(data.email, data.role);
+    } catch (err) {
+      setError(true);
+      setTimeout(() => setError(false), 1500);
+    }
   };
 
   const handleGuestLogin = () => {

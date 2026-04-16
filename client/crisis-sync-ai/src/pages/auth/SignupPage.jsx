@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import DarkToggle from "../../components/auth/DarkToggle";
 import GoogleButton from "../../components/auth/GoogleButton";
+import api from "../../api/api";
 
 export default function SignupPage({ onNavigateLogin }) {
   const { theme } = useTheme();
@@ -11,13 +12,19 @@ export default function SignupPage({ onNavigateLogin }) {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email || !password || password !== confirm) {
       setError(true);
       setTimeout(() => setError(false), 1500);
       return;
     }
-    alert(`Account created for ${email} as ${role}`);
+    try {
+      await api.post("/auth/signup", { email, password, role });
+      onNavigateLogin();
+    } catch (err) {
+      setError(true);
+      setTimeout(() => setError(false), 1500);
+    }
   };
 
   return (

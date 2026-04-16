@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import DarkToggle from "../../components/auth/DarkToggle";
+import api from "../../api/api";
 
 export default function GuestPage({ onNavigateLogin }) {
   const { theme } = useTheme();
@@ -10,14 +11,19 @@ export default function GuestPage({ onNavigateLogin }) {
   const [roomNumber, setRoomNumber] = useState("");
   const [error, setError] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!roomNumber.trim()) {
       setError(true);
       setTimeout(() => setError(false), 1500);
       return;
     }
-    login(`guest-room-${roomNumber}`, "guest");
-    alert(`Entering as Guest — Room ${roomNumber}`);
+    try {
+      const { data } = await api.post("/auth/guest", { roomNumber });
+      login(data.email ?? `guest-room-${roomNumber}`, "guest");
+    } catch (err) {
+      setError(true);
+      setTimeout(() => setError(false), 1500);
+    }
   };
 
   return (
@@ -133,3 +139,4 @@ export default function GuestPage({ onNavigateLogin }) {
     </div>
   );
 }
+
