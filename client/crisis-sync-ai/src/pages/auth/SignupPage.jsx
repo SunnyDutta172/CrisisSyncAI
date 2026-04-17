@@ -6,20 +6,29 @@ import api from "../../api/api";
 
 export default function SignupPage({ onNavigateLogin }) {
   const { theme } = useTheme();
-  const [role, setRole] = useState("admin");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [org, setOrg] = useState("");
+  const [adminKey, setAdminKey] = useState("");
   const [error, setError] = useState(false);
 
   const handleSubmit = async () => {
-    if (!email || !password || password !== confirm) {
+    if (!email || !password || !org || password !== confirm) {
       setError(true);
       setTimeout(() => setError(false), 1500);
       return;
     }
+
     try {
-      await api.post("/auth/signup", { email, password, role });
+      await api.post("api/auth/register", {
+        email,
+        password,
+        org,
+        adminKey // optional → only for admin
+      });
+
       onNavigateLogin();
     } catch (err) {
       setError(true);
@@ -28,125 +37,90 @@ export default function SignupPage({ onNavigateLogin }) {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: theme.page,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem 1rem",
-        fontFamily: "sans-serif",
-        position: "relative",
-        transition: "background .3s",
-      }}
-    >
+    <div style={{
+      minHeight: "100vh",
+      background: theme.page,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem 1rem",
+      fontFamily: "sans-serif",
+    }}>
+      
       <DarkToggle />
 
       <p style={{ fontSize: 20, fontWeight: 500, color: theme.text, marginBottom: "2rem" }}>
         CRISIS SYNC AI
       </p>
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 360,
-          background: theme.card,
-          border: `0.5px solid ${theme.border}`,
-          borderRadius: 16,
-          padding: "2rem 1.75rem",
-          transition: "background .3s",
-        }}
-      >
-        <h1 style={{ fontSize: 22, fontWeight: 500, textAlign: "center", color: theme.text }}>
+      <div style={{
+        width: "100%",
+        maxWidth: 360,
+        background: theme.card,
+        border: `0.5px solid ${theme.border}`,
+        borderRadius: 16,
+        padding: "2rem 1.75rem"
+      }}>
+
+        <h1 style={{ fontSize: 22, textAlign: "center", color: theme.text }}>
           Create Account
         </h1>
-        <p style={{ fontSize: 14, textAlign: "center", color: theme.muted, margin: "6px 0 20px" }}>
+
+        <p style={{ fontSize: 14, textAlign: "center", color: theme.muted, marginBottom: 20 }}>
           Sign up to get started
         </p>
 
-        {/* Role Dropdown — Admin & Staff only */}
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px 12px",
-            fontSize: 14,
-            borderRadius: 8,
-            marginBottom: 10,
-            background: theme.inputBg,
-            color: theme.text,
-            outline: "none",
-            border: `0.5px solid ${theme.inputBorder}`,
-            cursor: "pointer",
-            appearance: "none",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 12px center",
-            boxSizing: "border-box",
-          }}
-        >
-          <option value="admin">Admin</option>
-          <option value="staff">Staff</option>
-        </select>
+        {/* Organization */}
+        <input
+          type="text"
+          placeholder="Organization (Hotel Name)"
+          value={org}
+          onChange={(e) => setOrg(e.target.value)}
+          style={inputStyle(theme, error)}
+        />
 
-        {[
-          { field: "email", placeholder: "email@domain.com", value: email, set: setEmail },
-          { field: "password", placeholder: "Password", value: password, set: setPassword },
-          { field: "confirm", placeholder: "Confirm Password", value: confirm, set: setConfirm },
-        ].map(({ field, placeholder, value, set }) => (
-          <input
-            key={field}
-            type={field === "email" ? "email" : "password"}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => set(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px 12px",
-              fontSize: 14,
-              borderRadius: 8,
-              marginBottom: 10,
-              background: theme.inputBg,
-              color: theme.text,
-              outline: "none",
-              border: `0.5px solid ${error ? "#e24b4a" : theme.inputBorder}`,
-              transition: "border-color .15s",
-              boxSizing: "border-box",
-            }}
-          />
-        ))}
+        {/* Email */}
+        <input
+          type="email"
+          placeholder="email@domain.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={inputStyle(theme, error)}
+        />
 
-        <button
-          onClick={handleSubmit}
-          style={{
-            width: "100%",
-            padding: 11,
-            fontSize: 14,
-            fontWeight: 500,
-            background: theme.btnBg,
-            color: theme.btnText,
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
-            marginTop: 4,
-          }}
-        >
+        {/* Password */}
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={inputStyle(theme, error)}
+        />
+
+        {/* Confirm Password */}
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          style={inputStyle(theme, error)}
+        />
+
+        {/* Admin Key (optional) */}
+        <input
+          type="text"
+          placeholder="Admin Key (only for admin)"
+          value={adminKey}
+          onChange={(e) => setAdminKey(e.target.value)}
+          style={inputStyle(theme, error)}
+        />
+
+        <button onClick={handleSubmit} style={buttonStyle(theme)}>
           Create Account
         </button>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            margin: "1.1rem 0",
-            fontSize: 13,
-            color: theme.muted,
-          }}
-        >
+        <div style={dividerStyle(theme)}>
           <div style={{ flex: 1, height: 0.5, background: theme.border }} />
           <span>or continue with</span>
           <div style={{ flex: 1, height: 0.5, background: theme.border }} />
@@ -154,57 +128,62 @@ export default function SignupPage({ onNavigateLogin }) {
 
         <GoogleButton onClick={() => alert("Google sign-up coming soon!")} />
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            margin: "1.1rem 0",
-            fontSize: 13,
-            color: theme.muted,
-          }}
-        >
+        <div style={dividerStyle(theme)}>
           <div style={{ flex: 1, height: 0.5, background: theme.border }} />
           <span>Already have an account?</span>
           <div style={{ flex: 1, height: 0.5, background: theme.border }} />
         </div>
 
-        <button
-          onClick={onNavigateLogin}
-          style={{
-            width: "100%",
-            padding: 11,
-            fontSize: 14,
-            fontWeight: 500,
-            background: "transparent",
-            color: theme.text,
-            border: `0.5px solid ${theme.text}`,
-            borderRadius: 8,
-            cursor: "pointer",
-          }}
-        >
+        <button onClick={onNavigateLogin} style={outlineBtn(theme)}>
           Sign in
         </button>
-
-        <p
-          style={{
-            fontSize: 12,
-            textAlign: "center",
-            color: theme.muted,
-            marginTop: "1.25rem",
-            lineHeight: 1.6,
-          }}
-        >
-          By clicking continue, you agree to our{" "}
-          <span style={{ textDecoration: "underline", cursor: "pointer", color: theme.text }}>
-            Terms of Service
-          </span>{" "}
-          and{" "}
-          <span style={{ textDecoration: "underline", cursor: "pointer", color: theme.text }}>
-            Privacy Policy
-          </span>
-        </p>
       </div>
     </div>
   );
 }
+
+/* --- Styles --- */
+
+const inputStyle = (theme, error) => ({
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: 8,
+  marginBottom: 10,
+  background: theme.inputBg,
+  color: theme.text,
+  outline: "none",
+  border: `0.5px solid ${error ? "#e24b4a" : theme.inputBorder}`,
+});
+
+const buttonStyle = (theme) => ({
+  width: "100%",
+  padding: 11,
+  fontSize: 14,
+  fontWeight: 500,
+  background: theme.btnBg,
+  color: theme.btnText,
+  border: "none",
+  borderRadius: 8,
+  cursor: "pointer",
+  marginTop: 4,
+});
+
+const outlineBtn = (theme) => ({
+  width: "100%",
+  padding: 11,
+  background: "transparent",
+  color: theme.text,
+  border: `0.5px solid ${theme.text}`,
+  borderRadius: 8,
+  cursor: "pointer",
+});
+
+const dividerStyle = (theme) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  margin: "1rem 0",
+  fontSize: 13,
+  color: theme.muted,
+});
