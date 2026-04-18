@@ -12,6 +12,7 @@ export default function LoginPage({ onNavigateSignup, onNavigateGuest }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading]=useState(false);
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -20,11 +21,21 @@ export default function LoginPage({ onNavigateSignup, onNavigateGuest }) {
       return;
     }
     try {
+      setLoading(true);
       const { data } = await api.post("api/auth/login", { email, password });
-      login(data.email, data.role);
+      login(data.user.email, data.user.role);
     } catch (err) {
-      setError(true);
+      
+       if (err.response?.status === 401 || err.response?.status === 404) {
+        setError("Invalid email or password");
+      } else {
+        setError("Something went wrong. Try again.");
+      }
+      console.log(err)
       setTimeout(() => setError(false), 1500);
+    }
+    finally{
+      setLoading(false);
     }
   };
 

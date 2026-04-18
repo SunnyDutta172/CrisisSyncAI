@@ -7,14 +7,18 @@ import GuestPage from "./pages/auth/GuestPage";
 import AdminPage from "./pages/dashboard/AdminPage";
 import StaffPage from "./pages/dashboard/StaffPage";
 import GuestDashboard from "./pages/dashboard/GuestDashboard";
+import FullScreenLoader from "./components/common/FullScreenLoader";
+
 
 // Inner component so we can use useAuth hook
 function AppRouter() {
-  const { user } = useAuth();
+  
+  const { user,loading } = useAuth();
   const [page, setPage] = useState("login"); // "login" | "signup" | "guest"
   const [activeRole, setActiveRole] = useState(null);
 
   // Once logged in, show dashboards
+   if (loading) return <FullScreenLoader />;
   if (user) {
     const role = activeRole ?? user.role;
     const handleSwitch = (newRole) => setActiveRole(newRole);
